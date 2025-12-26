@@ -100,10 +100,6 @@ export function TerminalOutput({ sessionId, output }: TerminalOutputProps) {
   }, [output])
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full w-full bg-[#0a0a0a]"
-      style={{ padding: '8px' }}
-    />
+    <div ref={containerRef} className="h-full w-full bg-[#0a0a0a]" style={{ padding: '8px' }} />
   )
 }

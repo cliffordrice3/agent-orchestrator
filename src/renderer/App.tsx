@@ -21,8 +21,8 @@ export default function App() {
       appendTerminalOutput(sessionId, data)
     })
 
-    const unsubscribeExit = api.onTerminalExit((sessionId, code) => {
-      console.log(`Terminal ${sessionId} exited with code ${code}`)
+    const unsubscribeExit = api.onTerminalExit((_sessionId, _code) => {
+      // Terminal exited - could trigger UI update if needed
     })
 
     return () => {
@@ -31,21 +31,17 @@ export default function App() {
     }
   }, [loadSessions, appendTerminalOutput])
 
-  const activeSession = sessions.find(s => s.id === activeSessionId)
+  const activeSession = sessions.find((s) => s.id === activeSessionId)
 
   return (
     <TooltipProvider>
-      <div className="h-screen flex flex-col bg-background text-foreground">
+      <div className="flex h-screen flex-col bg-background text-foreground">
         {/* Header with session tabs */}
         <SessionTabs />
 
         {/* Main content */}
         <main className="flex-1 overflow-hidden">
-          {activeSession ? (
-            <SessionPanel session={activeSession} />
-          ) : (
-            <EmptyState />
-          )}
+          {activeSession ? <SessionPanel session={activeSession} /> : <EmptyState />}
         </main>
 
         {/* Dialogs */}
@@ -61,8 +57,8 @@ function EmptyState() {
   const { setShowNewSessionDialog } = useUiStore()
 
   return (
-    <div className="h-full flex items-center justify-center">
-      <div className="text-center space-y-4">
+    <div className="flex h-full items-center justify-center">
+      <div className="space-y-4 text-center">
         <h2 className="text-2xl font-semibold text-muted-foreground">No Active Sessions</h2>
         <p className="text-muted-foreground">
           Create a new session to start working with an AI coding agent

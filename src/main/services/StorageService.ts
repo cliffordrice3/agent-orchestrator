@@ -5,7 +5,7 @@ import type { StoredData, Session } from '../../shared/types'
 
 const DEFAULT_DATA: StoredData = {
   sessions: [],
-  reviewedFiles: {}
+  reviewedFiles: {},
 }
 
 export class StorageService {
@@ -52,13 +52,13 @@ export class StorageService {
   }
 
   removeSession(sessionId: string): void {
-    this.data.sessions = this.data.sessions.filter(s => s.id !== sessionId)
+    this.data.sessions = this.data.sessions.filter((s) => s.id !== sessionId)
     delete this.data.reviewedFiles[sessionId]
     this.save()
   }
 
   updateSession(sessionId: string, updates: Partial<Session>): void {
-    const index = this.data.sessions.findIndex(s => s.id === sessionId)
+    const index = this.data.sessions.findIndex((s) => s.id === sessionId)
     if (index >= 0) {
       this.data.sessions[index] = { ...this.data.sessions[index], ...updates }
       this.save()
@@ -87,7 +87,7 @@ export class StorageService {
   removeReviewedFile(sessionId: string, filePath: string): void {
     if (this.data.reviewedFiles[sessionId]) {
       this.data.reviewedFiles[sessionId] = this.data.reviewedFiles[sessionId].filter(
-        f => f !== filePath
+        (f) => f !== filePath
       )
       this.save()
     }

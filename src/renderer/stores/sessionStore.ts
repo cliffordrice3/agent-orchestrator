@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Session, FileChange, GitStatus, AgentType } from '@shared/types'
+import type { Session, GitStatus, AgentType } from '@shared/types'
 import { api } from '@/lib/ipc'
 
 interface SessionStore {
@@ -58,7 +58,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       set((state) => ({
         sessions: [...state.sessions, session],
         activeSessionId: session.id,
-        isLoading: false
+        isLoading: false,
       }))
       return session
     } catch (error) {
@@ -73,9 +73,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       set((state) => {
         const newSessions = state.sessions.filter((s) => s.id !== sessionId)
         const newActiveId =
-          state.activeSessionId === sessionId
-            ? newSessions[0]?.id || null
-            : state.activeSessionId
+          state.activeSessionId === sessionId ? newSessions[0]?.id || null : state.activeSessionId
 
         const { [sessionId]: _, ...newOutputs } = state.terminalOutputs
         const { [sessionId]: __, ...newStatuses } = state.gitStatuses
@@ -86,7 +84,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
           activeSessionId: newActiveId,
           terminalOutputs: newOutputs,
           gitStatuses: newStatuses,
-          reviewedFiles: newReviewed
+          reviewedFiles: newReviewed,
         }
       })
     } catch (error) {
@@ -103,8 +101,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     set((state) => ({
       terminalOutputs: {
         ...state.terminalOutputs,
-        [sessionId]: (state.terminalOutputs[sessionId] || '') + data
-      }
+        [sessionId]: (state.terminalOutputs[sessionId] || '') + data,
+      },
     }))
   },
 
@@ -112,8 +110,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     set((state) => ({
       terminalOutputs: {
         ...state.terminalOutputs,
-        [sessionId]: ''
-      }
+        [sessionId]: '',
+      },
     }))
   },
 
@@ -123,8 +121,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       set((state) => ({
         gitStatuses: {
           ...state.gitStatuses,
-          [sessionId]: status
-        }
+          [sessionId]: status,
+        },
       }))
     } catch (error) {
       console.error('Failed to refresh git status:', error)
@@ -139,8 +137,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       return {
         reviewedFiles: {
           ...state.reviewedFiles,
-          [sessionId]: updated
-        }
+          [sessionId]: updated,
+        },
       }
     })
   },
@@ -153,8 +151,8 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       return {
         reviewedFiles: {
           ...state.reviewedFiles,
-          [sessionId]: updated
-        }
+          [sessionId]: updated,
+        },
       }
     })
   },
@@ -163,12 +161,12 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
     set((state) => ({
       reviewedFiles: {
         ...state.reviewedFiles,
-        [sessionId]: new Set()
-      }
+        [sessionId]: new Set(),
+      },
     }))
   },
 
   isFileReviewed: (sessionId, filePath) => {
     return get().reviewedFiles[sessionId]?.has(filePath) || false
-  }
+  },
 }))

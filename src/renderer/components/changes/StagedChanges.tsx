@@ -2,7 +2,6 @@ import { Check, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSessionStore } from '@/stores/sessionStore'
-import { cn } from '@/lib/utils'
 
 interface StagedChangesProps {
   sessionId: string
@@ -19,7 +18,7 @@ export function StagedChanges({ sessionId }: StagedChangesProps) {
 
   return (
     <div className="border-t">
-      <div className="px-3 py-2 flex items-center justify-between bg-muted/20">
+      <div className="flex items-center justify-between bg-muted/20 px-3 py-2">
         <span className="text-xs font-medium text-muted-foreground">
           Reviewed Files ({reviewed.length})
         </span>
@@ -40,8 +39,8 @@ export function StagedChanges({ sessionId }: StagedChangesProps) {
               key={filePath}
               className="flex items-center gap-2 px-3 py-1 text-sm text-muted-foreground"
             >
-              <Check className="h-3 w-3 text-green-500 flex-shrink-0" />
-              <span className="truncate flex-1">{filePath}</span>
+              <Check className="h-3 w-3 flex-shrink-0 text-green-500" />
+              <span className="flex-1 truncate">{filePath}</span>
               <Button
                 variant="ghost"
                 size="icon"

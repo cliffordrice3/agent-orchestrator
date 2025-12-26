@@ -1,5 +1,5 @@
-import simpleGit, { SimpleGit } from 'simple-git'
-import { join, basename, dirname } from 'path'
+import simpleGit from 'simple-git'
+import { join } from 'path'
 import { existsSync, mkdirSync } from 'fs'
 import type { GitStatus, FileChange, WorktreeInfo } from '../../shared/types'
 
@@ -25,11 +25,7 @@ export class GitService {
     return branchSummary.current
   }
 
-  async createWorktree(
-    repoPath: string,
-    sessionId: string,
-    baseBranch: string
-  ): Promise<string> {
+  async createWorktree(repoPath: string, sessionId: string, baseBranch: string): Promise<string> {
     const git = simpleGit(repoPath)
 
     // Create worktrees directory if it doesn't exist
@@ -52,7 +48,7 @@ export class GitService {
 
     // Get the branch name associated with this worktree
     const worktrees = await this.listWorktrees(repoPath)
-    const worktree = worktrees.find(wt => wt.path === worktreePath)
+    const worktree = worktrees.find((wt) => wt.path === worktreePath)
     const branchToDelete = worktree?.branch
 
     // Remove the worktree
@@ -88,7 +84,7 @@ export class GitService {
           worktrees.push({
             path: currentPath,
             branch: currentBranch,
-            isMain: currentPath === repoPath || !currentPath.includes('.worktrees')
+            isMain: currentPath === repoPath || !currentPath.includes('.worktrees'),
           })
         }
         currentPath = ''
@@ -124,7 +120,7 @@ export class GitService {
       files.push({
         path: file.path,
         status: changeStatus,
-        oldPath: file.from // For renames
+        oldPath: file.from, // For renames
       })
     }
 
@@ -132,7 +128,7 @@ export class GitService {
       files,
       branch: branchInfo.current,
       ahead: status.ahead,
-      behind: status.behind
+      behind: status.behind,
     }
   }
 

@@ -22,11 +22,7 @@ export function AgentSelector({ value, onChange, disabled }: AgentSelectorProps)
       </SelectTrigger>
       <SelectContent>
         {Object.entries(AGENT_CONFIGS).map(([key, config]) => (
-          <SelectItem
-            key={key}
-            value={key}
-            disabled={!config.available}
-          >
+          <SelectItem key={key} value={key} disabled={!config.available}>
             {config.name} {!config.available && '(Soon)'}
           </SelectItem>
         ))}

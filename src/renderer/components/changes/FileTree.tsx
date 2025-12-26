@@ -16,11 +16,7 @@ export function FileTree({ sessionId, files, selectedFile, onSelectFile }: FileT
   const { isFileReviewed, markFileReviewed, unmarkFileReviewed } = useSessionStore()
 
   if (files.length === 0) {
-    return (
-      <div className="p-4 text-center text-sm text-muted-foreground">
-        No changes detected
-      </div>
-    )
+    return <div className="p-4 text-center text-sm text-muted-foreground">No changes detected</div>
   }
 
   function getStatusIcon(status: FileChange['status']) {
@@ -74,23 +70,18 @@ export function FileTree({ sessionId, files, selectedFile, onSelectFile }: FileT
           <div
             key={file.path}
             className={cn(
-              'group flex items-center gap-2 px-3 py-1 cursor-pointer transition-colors',
+              'group flex cursor-pointer items-center gap-2 px-3 py-1 transition-colors',
               isSelected ? 'bg-accent' : 'hover:bg-muted/50',
               reviewed && 'opacity-60'
             )}
             onClick={() => onSelectFile(file.path)}
           >
             {/* Status icon */}
-            <span className="flex-shrink-0">
-              {getStatusIcon(file.status)}
-            </span>
+            <span className="flex-shrink-0">{getStatusIcon(file.status)}</span>
 
             {/* File path */}
             <span
-              className={cn(
-                'text-sm truncate flex-1',
-                getStatusColor(file.status)
-              )}
+              className={cn('flex-1 truncate text-sm', getStatusColor(file.status))}
               title={file.path}
             >
               {file.path}
@@ -104,9 +95,7 @@ export function FileTree({ sessionId, files, selectedFile, onSelectFile }: FileT
                   size="icon"
                   className={cn(
                     'h-5 w-5 flex-shrink-0',
-                    reviewed
-                      ? 'text-green-500 opacity-100'
-                      : 'opacity-0 group-hover:opacity-100'
+                    reviewed ? 'text-green-500 opacity-100' : 'opacity-0 group-hover:opacity-100'
                   )}
                   onClick={(e) => toggleReview(e, file.path)}
                 >

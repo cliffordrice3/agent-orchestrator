@@ -2,7 +2,6 @@ import { useRef, useEffect, useState } from 'react'
 import { Send, RotateCcw, CheckCircle, XCircle, FileEdit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { TerminalOutput } from './TerminalOutput'
 import { useSessionStore } from '@/stores/sessionStore'
 import { api } from '@/lib/ipc'
@@ -41,9 +40,9 @@ export function ChatInterface({ session }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full flex-col">
       {/* Session info bar */}
-      <div className="h-10 border-b px-4 flex items-center justify-between bg-muted/30">
+      <div className="flex h-10 items-center justify-between border-b bg-muted/30 px-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{session.name}</span>
           {session.isGitRepo && (
@@ -65,7 +64,7 @@ export function ChatInterface({ session }: ChatInterfaceProps) {
                 className="h-7 px-2 text-xs"
                 onClick={() => sendControlCommand('/plan\n')}
               >
-                <FileEdit className="h-3 w-3 mr-1" />
+                <FileEdit className="mr-1 h-3 w-3" />
                 Plan
               </Button>
             </TooltipTrigger>
@@ -80,7 +79,7 @@ export function ChatInterface({ session }: ChatInterfaceProps) {
                 className="h-7 px-2 text-xs text-green-500 hover:text-green-400"
                 onClick={() => sendControlCommand('y\n')}
               >
-                <CheckCircle className="h-3 w-3 mr-1" />
+                <CheckCircle className="mr-1 h-3 w-3" />
                 Accept
               </Button>
             </TooltipTrigger>
@@ -95,7 +94,7 @@ export function ChatInterface({ session }: ChatInterfaceProps) {
                 className="h-7 px-2 text-xs text-red-500 hover:text-red-400"
                 onClick={() => sendControlCommand('n\n')}
               >
-                <XCircle className="h-3 w-3 mr-1" />
+                <XCircle className="mr-1 h-3 w-3" />
                 Reject
               </Button>
             </TooltipTrigger>
@@ -120,10 +119,7 @@ export function ChatInterface({ session }: ChatInterfaceProps) {
 
       {/* Terminal output */}
       <div className="flex-1 overflow-hidden">
-        <TerminalOutput
-          sessionId={session.id}
-          output={terminalOutput}
-        />
+        <TerminalOutput sessionId={session.id} output={terminalOutput} />
       </div>
 
       {/* Input area */}
@@ -135,14 +131,10 @@ export function ChatInterface({ session }: ChatInterfaceProps) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a message... (Enter to send, Shift+Enter for new line)"
-            className="flex-1 min-h-[60px] max-h-32 p-3 rounded-md border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            className="max-h-32 min-h-[60px] flex-1 resize-none rounded-md border bg-background p-3 focus:outline-none focus:ring-2 focus:ring-ring"
             rows={2}
           />
-          <Button
-            onClick={handleSend}
-            disabled={!input.trim()}
-            className="self-end"
-          >
+          <Button onClick={handleSend} disabled={!input.trim()} className="self-end">
             <Send className="h-4 w-4" />
           </Button>
         </div>

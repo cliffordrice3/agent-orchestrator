@@ -7,19 +7,20 @@ const api: IpcApi = {
     ipcRenderer.invoke('session:create', config),
   closeSession: (sessionId: string, deleteWorktree: boolean): Promise<void> =>
     ipcRenderer.invoke('session:close', sessionId, deleteWorktree),
-  getSessions: (): Promise<Session[]> =>
-    ipcRenderer.invoke('session:list'),
+  getSessions: (): Promise<Session[]> => ipcRenderer.invoke('session:list'),
 
   // Git operations
-  isGitRepo: (path: string): Promise<boolean> =>
-    ipcRenderer.invoke('git:isRepo', path),
-  getBranches: (path: string): Promise<string[]> =>
-    ipcRenderer.invoke('git:branches', path),
+  isGitRepo: (path: string): Promise<boolean> => ipcRenderer.invoke('git:isRepo', path),
+  getBranches: (path: string): Promise<string[]> => ipcRenderer.invoke('git:branches', path),
   getGitStatus: (sessionId: string): Promise<GitStatus> =>
     ipcRenderer.invoke('git:status', sessionId),
   getFileDiff: (sessionId: string, filePath: string): Promise<string> =>
     ipcRenderer.invoke('git:diff', sessionId, filePath),
-  getFileDiffAgainstStaged: (sessionId: string, filePath: string, stagedContent: string): Promise<string> =>
+  getFileDiffAgainstStaged: (
+    sessionId: string,
+    filePath: string,
+    stagedContent: string
+  ): Promise<string> =>
     ipcRenderer.invoke('git:diffAgainstStaged', sessionId, filePath, stagedContent),
 
   // Terminal operations
@@ -29,8 +30,7 @@ const api: IpcApi = {
     ipcRenderer.invoke('terminal:resize', sessionId, cols, rows),
 
   // File operations
-  selectFolder: (): Promise<string | null> =>
-    ipcRenderer.invoke('dialog:selectFolder'),
+  selectFolder: (): Promise<string | null> => ipcRenderer.invoke('dialog:selectFolder'),
   openInVSCode: (path: string, files?: string[]): Promise<void> =>
     ipcRenderer.invoke('vscode:open', path, files),
   getFileContent: (sessionId: string, filePath: string): Promise<string> =>
@@ -58,7 +58,7 @@ const api: IpcApi = {
     }
     ipcRenderer.on('terminal:exit', handler)
     return () => ipcRenderer.removeListener('terminal:exit', handler)
-  }
+  },
 }
 
 contextBridge.exposeInMainWorld('api', api)

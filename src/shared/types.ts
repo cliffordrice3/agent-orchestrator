@@ -48,7 +48,11 @@ export interface IpcApi {
   getBranches: (path: string) => Promise<string[]>
   getGitStatus: (sessionId: string) => Promise<GitStatus>
   getFileDiff: (sessionId: string, filePath: string) => Promise<string>
-  getFileDiffAgainstStaged: (sessionId: string, filePath: string, stagedContent: string) => Promise<string>
+  getFileDiffAgainstStaged: (
+    sessionId: string,
+    filePath: string,
+    stagedContent: string
+  ) => Promise<string>
 
   // Terminal operations
   sendInput: (sessionId: string, data: string) => Promise<void>
@@ -88,20 +92,20 @@ export const AGENT_CONFIGS: Record<AgentType, AgentConfig> = {
     name: 'Claude Code',
     command: 'claude',
     args: [],
-    available: true
+    available: true,
   },
-  'codex': {
+  codex: {
     name: 'Codex',
     command: 'codex',
     args: [],
-    available: false // Stubbed
+    available: false, // Stubbed
   },
-  'cursor': {
+  cursor: {
     name: 'Cursor',
     command: 'cursor',
     args: ['--chat'],
-    available: false // Stubbed
-  }
+    available: false, // Stubbed
+  },
 }
 
 export interface AgentConfig {

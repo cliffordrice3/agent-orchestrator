@@ -1,4 +1,4 @@
-import { Plus, X, Settings, FolderGit2 } from 'lucide-react'
+import { Plus, X, FolderGit2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSessionStore } from '@/stores/sessionStore'
@@ -7,15 +7,16 @@ import { cn } from '@/lib/utils'
 
 export function SessionTabs() {
   const { sessions, activeSessionId, setActiveSession } = useSessionStore()
-  const { setShowNewSessionDialog, setShowCloseSessionDialog, setShowManageWorktreesDialog } = useUiStore()
+  const { setShowNewSessionDialog, setShowCloseSessionDialog, setShowManageWorktreesDialog } =
+    useUiStore()
 
   return (
-    <header className="h-12 border-b bg-muted/30 flex items-center px-2 gap-1 drag-region">
+    <header className="drag-region flex h-12 items-center gap-1 border-b bg-muted/30 px-2">
       {/* Spacer for macOS traffic lights */}
       <div className="w-16 flex-shrink-0" />
 
       {/* Session tabs */}
-      <div className="flex-1 flex items-center gap-1 overflow-x-auto no-drag">
+      <div className="no-drag flex flex-1 items-center gap-1 overflow-x-auto">
         {sessions.map((session) => (
           <SessionTab
             key={session.id}
@@ -46,7 +47,7 @@ export function SessionTabs() {
       </div>
 
       {/* Right side actions */}
-      <div className="flex items-center gap-1 no-drag">
+      <div className="no-drag flex items-center gap-1">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -81,21 +82,21 @@ function SessionTab({ session, isActive, onClick, onClose }: SessionTabProps) {
   return (
     <div
       className={cn(
-        'group flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer transition-colors max-w-48',
-        isActive
-          ? 'bg-background shadow-sm'
-          : 'hover:bg-muted'
+        'group flex max-w-48 cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 transition-colors',
+        isActive ? 'bg-background shadow-sm' : 'hover:bg-muted'
       )}
       onClick={onClick}
     >
-      <span className="text-sm truncate flex-1">{session.name}</span>
+      <span className="flex-1 truncate text-sm">{session.name}</span>
       {!session.isGitRepo && (
-        <span className="text-xs text-yellow-500" title="Not a git repo">!</span>
+        <span className="text-xs text-yellow-500" title="Not a git repo">
+          !
+        </span>
       )}
       <Button
         variant="ghost"
         size="icon"
-        className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="h-5 w-5 opacity-0 transition-opacity group-hover:opacity-100"
         onClick={(e) => {
           e.stopPropagation()
           onClose()

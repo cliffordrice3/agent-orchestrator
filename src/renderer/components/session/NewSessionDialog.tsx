@@ -68,7 +68,8 @@ export function NewSessionDialog() {
           setBranches(branchList)
           if (branchList.length > 0) {
             // Default to main or master if available
-            const defaultBranch = branchList.find(b => b === 'main' || b === 'master') || branchList[0]
+            const defaultBranch =
+              branchList.find((b) => b === 'main' || b === 'master') || branchList[0]
             setSelectedBranch(defaultBranch)
           }
         }
@@ -142,7 +143,7 @@ export function NewSessionDialog() {
               </Button>
             </div>
             {isGitRepo === false && folderPath && (
-              <p className="text-sm text-yellow-500 flex items-center gap-1">
+              <p className="flex items-center gap-1 text-sm text-yellow-500">
                 <AlertCircle className="h-3 w-3" />
                 Not a git repository. Parallel agents not supported.
               </p>
@@ -191,11 +192,7 @@ export function NewSessionDialog() {
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(AGENT_CONFIGS).map(([key, config]) => (
-                  <SelectItem
-                    key={key}
-                    value={key}
-                    disabled={!config.available}
-                  >
+                  <SelectItem key={key} value={key} disabled={!config.available}>
                     {config.name} {!config.available && '(Coming Soon)'}
                   </SelectItem>
                 ))}
@@ -203,9 +200,7 @@ export function NewSessionDialog() {
             </Select>
           </div>
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
 
         <DialogFooter>

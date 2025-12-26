@@ -19,7 +19,7 @@ export function CloseSessionDialog() {
   const [deleteWorktree, setDeleteWorktree] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
 
-  const session = sessions.find(s => s.id === activeSessionId)
+  const session = sessions.find((s) => s.id === activeSessionId)
 
   async function handleClose() {
     if (!session) return
@@ -43,7 +43,7 @@ export function CloseSessionDialog() {
         <AlertDialogHeader>
           <AlertDialogTitle>Close Session</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to close "{session.name}"?
+            Are you sure you want to close &quot;{session.name}&quot;?
           </AlertDialogDescription>
         </AlertDialogHeader>
 

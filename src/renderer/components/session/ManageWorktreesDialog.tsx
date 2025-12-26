@@ -74,7 +74,7 @@ export function ManageWorktreesDialog() {
   }
 
   // Filter out the main worktree (the actual repo)
-  const agentWorktrees = worktrees.filter(wt => !wt.isMain)
+  const agentWorktrees = worktrees.filter((wt) => !wt.isMain)
 
   return (
     <Dialog open={showManageWorktreesDialog} onOpenChange={setShowManageWorktreesDialog}>
@@ -108,9 +108,7 @@ export function ManageWorktreesDialog() {
             </div>
           </div>
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
 
           {/* Worktrees list */}
           {repoPath && (
@@ -118,23 +116,23 @@ export function ManageWorktreesDialog() {
               <Label>Agent Worktrees ({agentWorktrees.length})</Label>
               <ScrollArea className="h-64 rounded-md border">
                 {isLoading ? (
-                  <div className="flex items-center justify-center h-32">
+                  <div className="flex h-32 items-center justify-center">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : agentWorktrees.length === 0 ? (
-                  <div className="flex items-center justify-center h-32 text-muted-foreground">
+                  <div className="flex h-32 items-center justify-center text-muted-foreground">
                     No agent worktrees found
                   </div>
                 ) : (
-                  <div className="p-2 space-y-2">
+                  <div className="space-y-2 p-2">
                     {agentWorktrees.map((wt) => (
                       <div
                         key={wt.path}
-                        className="flex items-center justify-between p-2 rounded-md bg-muted/50"
+                        className="flex items-center justify-between rounded-md bg-muted/50 p-2"
                       >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{wt.branch}</p>
-                          <p className="text-xs text-muted-foreground truncate">{wt.path}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">{wt.branch}</p>
+                          <p className="truncate text-xs text-muted-foreground">{wt.path}</p>
                         </div>
                         <Button
                           variant="ghost"

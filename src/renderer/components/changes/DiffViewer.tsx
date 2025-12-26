@@ -22,7 +22,7 @@ export function DiffViewer({ sessionId, filePath }: DiffViewerProps) {
       try {
         const [original, modified] = await Promise.all([
           api.getOriginalFileContent(sessionId, filePath),
-          api.getFileContent(sessionId, filePath)
+          api.getFileContent(sessionId, filePath),
         ])
 
         setOriginalContent(original)
@@ -80,7 +80,7 @@ export function DiffViewer({ sessionId, filePath }: DiffViewerProps) {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     )
@@ -88,7 +88,7 @@ export function DiffViewer({ sessionId, filePath }: DiffViewerProps) {
 
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center text-destructive text-sm">
+      <div className="flex h-full items-center justify-center text-sm text-destructive">
         {error}
       </div>
     )

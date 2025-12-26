@@ -29,11 +29,7 @@ export class SessionManager {
       }
 
       // Create a worktree for this session
-      worktreePath = await gitService.createWorktree(
-        config.repoPath,
-        sessionId,
-        baseBranch
-      )
+      worktreePath = await gitService.createWorktree(config.repoPath, sessionId, baseBranch)
     }
 
     const session: Session = {
@@ -45,7 +41,7 @@ export class SessionManager {
       baseBranch: baseBranch || '',
       agent: config.agent,
       isGitRepo,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     }
 
     this.activeSessions.set(session.id, session)

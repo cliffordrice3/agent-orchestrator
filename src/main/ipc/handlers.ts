@@ -1,4 +1,5 @@
-import { ipcMain, dialog, BrowserWindow, shell } from 'electron'
+import { ipcMain, dialog, shell } from 'electron'
+import type { BrowserWindow } from 'electron'
 import { exec } from 'child_process'
 import { sessionManager } from '../services/SessionManager'
 import { terminalManager } from '../services/TerminalManager'
@@ -42,12 +43,15 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
     return gitService.getFileDiff(workingDir, filePath)
   })
 
-  ipcMain.handle('git:diffAgainstStaged', async (_, sessionId: string, filePath: string, _stagedContent: string) => {
-    // For now, just return the regular diff
-    // In a more advanced implementation, we could compute diff against staged content
-    const workingDir = sessionManager.getSessionWorkingDir(sessionId)
-    return gitService.getFileDiff(workingDir, filePath)
-  })
+  ipcMain.handle(
+    'git:diffAgainstStaged',
+    async (_, sessionId: string, filePath: string, _stagedContent: string) => {
+      // For now, just return the regular diff
+      // In a more advanced implementation, we could compute diff against staged content
+      const workingDir = sessionManager.getSessionWorkingDir(sessionId)
+      return gitService.getFileDiff(workingDir, filePath)
+    }
+  )
 
   // Terminal operations
   ipcMain.handle('terminal:input', async (_, sessionId: string, data: string) => {
@@ -61,7 +65,7 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
   // File operations
   ipcMain.handle('dialog:selectFolder', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ['openDirectory']
+      properties: ['openDirectory'],
     })
     if (result.canceled || result.filePaths.length === 0) {
       return null
@@ -70,18 +74,16 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
   })
 
   ipcMain.handle('vscode:open', async (_, path: string, files?: string[]) => {
-    const args = files && files.length > 0
-      ? [path, ...files.map(f => `${path}/${f}`)]
-      : [path]
+    const args = files && files.length > 0 ? [path, ...files.map((f) => `${path}/${f}`)] : [path]
 
-    const command = process.platform === 'darwin'
-      ? `code ${args.map(a => `"${a}"`).join(' ')}`
-      : `code ${args.map(a => `"${a}"`).join(' ')}`
+    const command =
+      process.platform === 'darwin'
+        ? `code ${args.map((a) => `"${a}"`).join(' ')}`
+        : `code ${args.map((a) => `"${a}"`).join(' ')}`
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       exec(command, (error) => {
         if (error) {
-          // Try opening with shell if 'code' command not found
           shell.openPath(path)
         }
         resolve()

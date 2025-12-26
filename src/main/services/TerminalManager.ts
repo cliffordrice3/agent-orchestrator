@@ -1,6 +1,6 @@
 import * as pty from 'node-pty'
-import { BrowserWindow } from 'electron'
-import type { Session, AgentType, AGENT_CONFIGS } from '../../shared/types'
+import type { BrowserWindow } from 'electron'
+import type { Session, AGENT_CONFIGS } from '../../shared/types'
 
 interface TerminalInstance {
   pty: pty.IPty
@@ -12,20 +12,20 @@ const agentConfigs: typeof AGENT_CONFIGS = {
     name: 'Claude Code',
     command: 'claude',
     args: [],
-    available: true
+    available: true,
   },
-  'codex': {
+  codex: {
     name: 'Codex',
     command: 'codex',
     args: [],
-    available: false
+    available: false,
   },
-  'cursor': {
+  cursor: {
     name: 'Cursor',
     command: 'cursor',
     args: ['--chat'],
-    available: false
-  }
+    available: false,
+  },
 }
 
 export class TerminalManager {
@@ -56,14 +56,14 @@ export class TerminalManager {
       env: {
         ...process.env,
         TERM: 'xterm-256color',
-        COLORTERM: 'truecolor'
-      }
+        COLORTERM: 'truecolor',
+      },
     })
 
     // Store the terminal instance
     this.terminals.set(session.id, {
       pty: terminal,
-      sessionId: session.id
+      sessionId: session.id,
     })
 
     // Set up data handler

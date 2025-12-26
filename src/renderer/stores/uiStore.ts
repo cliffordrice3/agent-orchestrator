@@ -30,5 +30,6 @@ export const useUiStore = create<UiStore>((set) => ({
   setShowManageWorktreesDialog: (show) => set({ showManageWorktreesDialog: show }),
   setSelectedFileForDiff: (filePath) => set({ selectedFileForDiff: filePath }),
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
-  toggleChangesPanel: () => set((state) => ({ changesPanelCollapsed: !state.changesPanelCollapsed }))
+  toggleChangesPanel: () =>
+    set((state) => ({ changesPanelCollapsed: !state.changesPanelCollapsed })),
 }))
