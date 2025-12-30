@@ -1,5 +1,15 @@
 export type AgentType = 'claude-code' | 'codex' | 'cursor'
 
+// Terminal state types for event detection
+export type TerminalEventType = 'idle' | 'thinking' | 'tool_use' | 'waiting_input'
+
+export interface TerminalState {
+  type: TerminalEventType
+  subtype?: 'prompt' | 'confirmation' // For waiting_input
+  tool?: string // For tool_use (read, write, edit, bash, search)
+  timestamp: number
+}
+
 export interface Session {
   id: string
   name: string
@@ -71,6 +81,7 @@ export interface IpcApi {
   // Event listeners
   onTerminalOutput: (callback: (sessionId: string, data: string) => void) => () => void
   onTerminalExit: (callback: (sessionId: string, code: number) => void) => () => void
+  onTerminalState: (callback: (sessionId: string, state: TerminalState) => void) => () => void
 }
 
 export interface CreateSessionConfig {

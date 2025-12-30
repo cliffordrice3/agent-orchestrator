@@ -1,11 +1,12 @@
 import { create } from 'zustand'
-import type { Session, GitStatus, AgentType } from '@shared/types'
+import type { Session, GitStatus, AgentType, TerminalState } from '@shared/types'
 import { api } from '@/lib/ipc'
 
 interface SessionStore {
   sessions: Session[]
   activeSessionId: string | null
   terminalOutputs: Record<string, string>
+  terminalStates: Record<string, TerminalState>
   gitStatuses: Record<string, GitStatus>
   reviewedFiles: Record<string, Set<string>>
   isLoading: boolean
@@ -22,6 +23,7 @@ interface SessionStore {
   setActiveSession: (sessionId: string | null) => void
   appendTerminalOutput: (sessionId: string, data: string) => void
   clearTerminalOutput: (sessionId: string) => void
+  setTerminalState: (sessionId: string, state: TerminalState) => void
   refreshGitStatus: (sessionId: string) => Promise<void>
   markFileReviewed: (sessionId: string, filePath: string) => void
   unmarkFileReviewed: (sessionId: string, filePath: string) => void
@@ -33,6 +35,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
   sessions: [],
   activeSessionId: null,
   terminalOutputs: {},
+  terminalStates: {},
   gitStatuses: {},
   reviewedFiles: {},
   isLoading: false,
@@ -76,13 +79,15 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
           state.activeSessionId === sessionId ? newSessions[0]?.id || null : state.activeSessionId
 
         const { [sessionId]: _, ...newOutputs } = state.terminalOutputs
-        const { [sessionId]: __, ...newStatuses } = state.gitStatuses
-        const { [sessionId]: ___, ...newReviewed } = state.reviewedFiles
+        const { [sessionId]: __, ...newTerminalStates } = state.terminalStates
+        const { [sessionId]: ___, ...newStatuses } = state.gitStatuses
+        const { [sessionId]: ____, ...newReviewed } = state.reviewedFiles
 
         return {
           sessions: newSessions,
           activeSessionId: newActiveId,
           terminalOutputs: newOutputs,
+          terminalStates: newTerminalStates,
           gitStatuses: newStatuses,
           reviewedFiles: newReviewed,
         }
@@ -111,6 +116,15 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       terminalOutputs: {
         ...state.terminalOutputs,
         [sessionId]: '',
+      },
+    }))
+  },
+
+  setTerminalState: (sessionId, state) => {
+    set((s) => ({
+      terminalStates: {
+        ...s.terminalStates,
+        [sessionId]: state,
       },
     }))
   },

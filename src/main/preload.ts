@@ -1,5 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { IpcApi, CreateSessionConfig, Session, GitStatus, WorktreeInfo } from '../shared/types'
+import type {
+  IpcApi,
+  CreateSessionConfig,
+  Session,
+  GitStatus,
+  WorktreeInfo,
+  TerminalState,
+} from '../shared/types'
 
 const api: IpcApi = {
   // Session management
@@ -58,6 +65,13 @@ const api: IpcApi = {
     }
     ipcRenderer.on('terminal:exit', handler)
     return () => ipcRenderer.removeListener('terminal:exit', handler)
+  },
+  onTerminalState: (callback: (sessionId: string, state: TerminalState) => void): (() => void) => {
+    const handler = (_: Electron.IpcRendererEvent, sessionId: string, state: TerminalState) => {
+      callback(sessionId, state)
+    }
+    ipcRenderer.on('terminal:state', handler)
+    return () => ipcRenderer.removeListener('terminal:state', handler)
   },
 }
 

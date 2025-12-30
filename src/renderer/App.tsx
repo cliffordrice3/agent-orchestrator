@@ -10,26 +10,44 @@ import { useUiStore } from '@/stores/uiStore'
 import { api } from '@/lib/ipc'
 
 export default function App() {
-  const { loadSessions, sessions, activeSessionId, appendTerminalOutput } = useSessionStore()
+  const {
+    loadSessions,
+    sessions,
+    activeSessionId,
+    appendTerminalOutput,
+    setTerminalState,
+    isLoading,
+  } = useSessionStore()
+  const { setShowNewSessionDialog } = useUiStore()
 
   useEffect(() => {
-    // Load existing sessions on mount
     loadSessions()
 
-    // Set up terminal output listener
     const unsubscribeOutput = api.onTerminalOutput((sessionId, data) => {
       appendTerminalOutput(sessionId, data)
     })
 
     const unsubscribeExit = api.onTerminalExit((_sessionId, _code) => {
-      // Terminal exited - could trigger UI update if needed
+      // Terminal exited
+    })
+
+    const unsubscribeState = api.onTerminalState((sessionId, state) => {
+      setTerminalState(sessionId, state)
     })
 
     return () => {
       unsubscribeOutput()
       unsubscribeExit()
+      unsubscribeState()
     }
-  }, [loadSessions, appendTerminalOutput])
+  }, [loadSessions, appendTerminalOutput, setTerminalState])
+
+  // Auto-open new session dialog when no sessions exist
+  useEffect(() => {
+    if (!isLoading && sessions.length === 0) {
+      setShowNewSessionDialog(true)
+    }
+  }, [isLoading, sessions.length, setShowNewSessionDialog])
 
   const activeSession = sessions.find((s) => s.id === activeSessionId)
 
@@ -54,22 +72,9 @@ export default function App() {
 }
 
 function EmptyState() {
-  const { setShowNewSessionDialog } = useUiStore()
-
   return (
     <div className="flex h-full items-center justify-center">
-      <div className="space-y-4 text-center">
-        <h2 className="text-2xl font-semibold text-muted-foreground">No Active Sessions</h2>
-        <p className="text-muted-foreground">
-          Create a new session to start working with an AI coding agent
-        </p>
-        <button
-          onClick={() => setShowNewSessionDialog(true)}
-          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          Create New Session
-        </button>
-      </div>
+      <p className="text-muted-foreground">No active sessions</p>
     </div>
   )
 }

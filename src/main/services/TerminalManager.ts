@@ -1,6 +1,7 @@
 import * as pty from 'node-pty'
 import type { BrowserWindow } from 'electron'
 import type { Session, AGENT_CONFIGS } from '../../shared/types'
+import { getParser, removeParser } from './TerminalParser'
 
 interface TerminalInstance {
   pty: pty.IPty
@@ -66,9 +67,16 @@ export class TerminalManager {
       sessionId: session.id,
     })
 
-    // Set up data handler
+    // Set up data handler with event parsing
+    const parser = getParser(session.id)
     terminal.onData((data) => {
       this.mainWindow?.webContents.send('terminal:output', session.id, data)
+
+      // Parse for state changes
+      const stateChange = parser.parse(data)
+      if (stateChange) {
+        this.mainWindow?.webContents.send('terminal:state', session.id, stateChange)
+      }
     })
 
     // Set up exit handler
@@ -103,6 +111,7 @@ export class TerminalManager {
     if (terminal) {
       terminal.pty.kill()
       this.terminals.delete(sessionId)
+      removeParser(sessionId)
     }
   }
 

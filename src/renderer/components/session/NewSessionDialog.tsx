@@ -25,7 +25,8 @@ import type { AgentType } from '@shared/types'
 import { AGENT_CONFIGS } from '@shared/types'
 
 export function NewSessionDialog() {
-  const { showNewSessionDialog, setShowNewSessionDialog } = useUiStore()
+  const { showNewSessionDialog, setShowNewSessionDialog, lastSessionConfig, setLastSessionConfig } =
+    useUiStore()
   const { createSession } = useSessionStore()
 
   const [folderPath, setFolderPath] = useState('')
@@ -37,7 +38,18 @@ export function NewSessionDialog() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Reset state when dialog opens/closes
+  // Load last config when dialog opens
+  useEffect(() => {
+    if (showNewSessionDialog && lastSessionConfig) {
+      setFolderPath(lastSessionConfig.folderPath)
+      setSelectedAgent(lastSessionConfig.agent)
+      // Derive session name from folder
+      const folderName = lastSessionConfig.folderPath.split('/').pop() || 'New Session'
+      setSessionName(folderName)
+    }
+  }, [showNewSessionDialog, lastSessionConfig])
+
+  // Reset state when dialog closes
   useEffect(() => {
     if (!showNewSessionDialog) {
       setFolderPath('')
@@ -108,6 +120,13 @@ export function NewSessionDialog() {
         branch: selectedBranch,
         agent: selectedAgent,
       })
+
+      // Save config for next time
+      setLastSessionConfig({
+        folderPath,
+        agent: selectedAgent,
+      })
+
       setShowNewSessionDialog(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create session')

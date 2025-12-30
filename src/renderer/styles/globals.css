@@ -53,9 +53,34 @@
   * {
     @apply border-border;
   }
+  html {
+    /* Rounded corners for the app */
+    overflow: hidden;
+  }
   body {
     @apply bg-background text-foreground;
+    /* Smooth font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent text selection on drag areas */
+    user-select: none;
   }
+  /* Allow text selection in content areas */
+  input,
+  textarea,
+  [contenteditable],
+  .selectable {
+    user-select: text;
+  }
+}
+
+/* macOS title bar drag region */
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
 }
 
 /* Terminal styles */

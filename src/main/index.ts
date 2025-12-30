@@ -12,7 +12,13 @@ function createWindow(): void {
     show: false,
     autoHideMenuBar: true,
     titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 15, y: 10 },
+    trafficLightPosition: { x: 15, y: 15 },
+    icon: join(__dirname, '../../resources/icon.png'),
+    backgroundColor: '#00000000',
+    transparent: false,
+    vibrancy: 'sidebar',
+    visualEffectState: 'active',
+    roundedCorners: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
@@ -43,6 +49,11 @@ function createWindow(): void {
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.agent-orchestrator')
+
+  // Set dock icon on macOS (use rounded version for dev, packaged app gets squircle automatically)
+  if (process.platform === 'darwin' && app.dock) {
+    app.dock.setIcon(join(__dirname, '../../resources/icon-rounded.png'))
+  }
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)

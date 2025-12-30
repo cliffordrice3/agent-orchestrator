@@ -1,4 +1,4 @@
-import { ipcMain, dialog, shell } from 'electron'
+import { ipcMain, dialog } from 'electron'
 import type { BrowserWindow } from 'electron'
 import { exec } from 'child_process'
 import { sessionManager } from '../services/SessionManager'
@@ -76,17 +76,26 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
   ipcMain.handle('vscode:open', async (_, path: string, files?: string[]) => {
     const args = files && files.length > 0 ? [path, ...files.map((f) => `${path}/${f}`)] : [path]
 
+    // On macOS, use 'open' with VS Code app bundle since 'code' CLI may not be in PATH
     const command =
       process.platform === 'darwin'
-        ? `code ${args.map((a) => `"${a}"`).join(' ')}`
+        ? `open -a "Visual Studio Code" ${args.map((a) => `"${a}"`).join(' ')}`
         : `code ${args.map((a) => `"${a}"`).join(' ')}`
 
     return new Promise<void>((resolve) => {
       exec(command, (error) => {
         if (error) {
-          shell.openPath(path)
+          console.error('Failed to open VS Code:', error)
+          // Fallback: try the 'code' CLI directly (user may have it in PATH)
+          exec(`code ${args.map((a) => `"${a}"`).join(' ')}`, (codeError) => {
+            if (codeError) {
+              console.error('Code CLI also failed:', codeError)
+            }
+            resolve()
+          })
+        } else {
+          resolve()
         }
-        resolve()
       })
     })
   })
