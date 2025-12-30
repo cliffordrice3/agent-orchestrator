@@ -62,6 +62,23 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
     terminalManager.resizeTerminal(sessionId, cols, rows)
   })
 
+  // Standalone terminal operations (for test runner)
+  ipcMain.handle('standalone:create', async (_, id: string, cwd: string) => {
+    return terminalManager.createStandaloneTerminal(id, cwd)
+  })
+
+  ipcMain.handle('standalone:input', async (_, id: string, data: string) => {
+    terminalManager.sendStandaloneInput(id, data)
+  })
+
+  ipcMain.handle('standalone:resize', async (_, id: string, cols: number, rows: number) => {
+    terminalManager.resizeStandaloneTerminal(id, cols, rows)
+  })
+
+  ipcMain.handle('standalone:close', async (_, id: string) => {
+    terminalManager.closeStandaloneTerminal(id)
+  })
+
   // File operations
   ipcMain.handle('dialog:selectFolder', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {

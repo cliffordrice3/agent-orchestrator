@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { PanelRightClose, AlertTriangle } from 'lucide-react'
+import { PanelRightClose, AlertTriangle, Terminal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ChatInterface } from '@/components/chat/ChatInterface'
 import { ChangesPanel } from '@/components/changes/ChangesPanel'
+import { useUiStore } from '@/stores/uiStore'
 import type { Session } from '@shared/types'
 import { cn } from '@/lib/utils'
 
@@ -13,6 +14,7 @@ interface SessionPanelProps {
 
 export function SessionPanel({ session }: SessionPanelProps) {
   const [showChanges, setShowChanges] = useState(true)
+  const { showTestTerminal, setShowTestTerminal } = useUiStore()
 
   return (
     <div className="flex h-full flex-col">
@@ -41,9 +43,9 @@ export function SessionPanel({ session }: SessionPanelProps) {
           </div>
         )}
 
-        {/* Toggle changes panel button */}
+        {/* Right side buttons */}
         {session.isGitRepo && !showChanges && (
-          <div className="flex items-start border-l py-2">
+          <div className="flex flex-col items-center gap-1 border-l px-1 py-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -56,6 +58,19 @@ export function SessionPanel({ session }: SessionPanelProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="left">Show Changes</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn('h-8 w-8', showTestTerminal && 'bg-muted')}
+                  onClick={() => setShowTestTerminal(!showTestTerminal)}
+                >
+                  <Terminal className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">Toggle Terminal</TooltipContent>
             </Tooltip>
           </div>
         )}

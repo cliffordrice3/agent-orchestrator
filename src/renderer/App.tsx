@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { SessionTabs } from '@/components/layout/SessionTabs'
+import { Sidebar } from '@/components/layout/Sidebar'
 import { SessionPanel } from '@/components/session/SessionPanel'
+import { TestTerminalPanel } from '@/components/terminal/TestTerminalPanel'
 import { NewSessionDialog } from '@/components/session/NewSessionDialog'
 import { CloseSessionDialog } from '@/components/session/CloseSessionDialog'
 import { ManageWorktreesDialog } from '@/components/session/ManageWorktreesDialog'
@@ -18,7 +19,7 @@ export default function App() {
     setTerminalState,
     isLoading,
   } = useSessionStore()
-  const { setShowNewSessionDialog } = useUiStore()
+  const { setShowNewSessionDialog, showTestTerminal } = useUiStore()
 
   useEffect(() => {
     loadSessions()
@@ -53,14 +54,20 @@ export default function App() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-screen flex-col bg-background text-foreground">
-        {/* Header with session tabs */}
-        <SessionTabs />
+      <div className="flex h-screen bg-background text-foreground">
+        {/* Sidebar with sessions grouped by workspace */}
+        <Sidebar />
 
-        {/* Main content */}
-        <main className="flex-1 overflow-hidden">
-          {activeSession ? <SessionPanel session={activeSession} /> : <EmptyState />}
-        </main>
+        {/* Main content area */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          {/* Session panel */}
+          <main className="flex-1 overflow-hidden">
+            {activeSession ? <SessionPanel session={activeSession} /> : <EmptyState />}
+          </main>
+
+          {/* Test terminal panel (collapsible) */}
+          {showTestTerminal && <TestTerminalPanel />}
+        </div>
 
         {/* Dialogs */}
         <NewSessionDialog />

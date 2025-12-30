@@ -68,6 +68,14 @@ export interface IpcApi {
   sendInput: (sessionId: string, data: string) => Promise<void>
   resizeTerminal: (sessionId: string, cols: number, rows: number) => Promise<void>
 
+  // Standalone terminal (for test runner)
+  createStandaloneTerminal: (id: string, cwd: string) => Promise<void>
+  sendStandaloneInput: (id: string, data: string) => Promise<void>
+  resizeStandaloneTerminal: (id: string, cols: number, rows: number) => Promise<void>
+  closeStandaloneTerminal: (id: string) => Promise<void>
+  onStandaloneOutput: (callback: (id: string, data: string) => void) => () => void
+  onStandaloneExit: (callback: (id: string, code: number) => void) => () => void
+
   // File operations
   selectFolder: () => Promise<string | null>
   openInVSCode: (path: string, files?: string[]) => Promise<void>

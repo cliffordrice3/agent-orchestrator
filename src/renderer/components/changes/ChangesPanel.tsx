@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, ExternalLink, PanelLeftClose, Eye, EyeOff } from 'lucide-react'
+import { RefreshCw, ExternalLink, PanelLeftClose, Eye, EyeOff, Terminal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -8,6 +8,7 @@ import { DiffViewer } from './DiffViewer'
 import { useSessionStore } from '@/stores/sessionStore'
 import { useUiStore } from '@/stores/uiStore'
 import { api } from '@/lib/ipc'
+import { cn } from '@/lib/utils'
 import type { Session } from '@shared/types'
 
 interface ChangesPanelProps {
@@ -17,7 +18,8 @@ interface ChangesPanelProps {
 
 export function ChangesPanel({ session, onClose }: ChangesPanelProps) {
   const { gitStatuses, refreshGitStatus, isFileReviewed } = useSessionStore()
-  const { selectedFileForDiff, setSelectedFileForDiff } = useUiStore()
+  const { selectedFileForDiff, setSelectedFileForDiff, showTestTerminal, setShowTestTerminal } =
+    useUiStore()
   const [isLoading, setIsLoading] = useState(false)
   const [showReviewedFiles, setShowReviewedFiles] = useState(false)
 
@@ -97,6 +99,20 @@ export function ChangesPanel({ session, onClose }: ChangesPanelProps) {
               </Button>
             </TooltipTrigger>
             <TooltipContent>Open in VS Code</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn('h-7 w-7', showTestTerminal && 'bg-muted')}
+                onClick={() => setShowTestTerminal(!showTestTerminal)}
+              >
+                <Terminal className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Toggle Terminal</TooltipContent>
           </Tooltip>
 
           <Tooltip>
