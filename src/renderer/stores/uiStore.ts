@@ -15,6 +15,8 @@ interface UiStore {
   sidebarCollapsed: boolean
   changesPanelCollapsed: boolean
   lastSessionConfig: LastSessionConfig | null
+  expandedWorkspaces: Record<string, boolean>
+  showTestTerminal: boolean
 
   // Actions
   setShowNewSessionDialog: (show: boolean) => void
@@ -24,6 +26,8 @@ interface UiStore {
   toggleSidebar: () => void
   toggleChangesPanel: () => void
   setLastSessionConfig: (config: LastSessionConfig) => void
+  toggleWorkspaceExpanded: (repoPath: string) => void
+  setShowTestTerminal: (show: boolean) => void
 }
 
 export const useUiStore = create<UiStore>()(
@@ -36,6 +40,8 @@ export const useUiStore = create<UiStore>()(
       sidebarCollapsed: false,
       changesPanelCollapsed: false,
       lastSessionConfig: null,
+      expandedWorkspaces: {},
+      showTestTerminal: false,
 
       setShowNewSessionDialog: (show) => set({ showNewSessionDialog: show }),
       setShowCloseSessionDialog: (show) => set({ showCloseSessionDialog: show }),
@@ -45,6 +51,14 @@ export const useUiStore = create<UiStore>()(
       toggleChangesPanel: () =>
         set((state) => ({ changesPanelCollapsed: !state.changesPanelCollapsed })),
       setLastSessionConfig: (config) => set({ lastSessionConfig: config }),
+      toggleWorkspaceExpanded: (repoPath) =>
+        set((state) => ({
+          expandedWorkspaces: {
+            ...state.expandedWorkspaces,
+            [repoPath]: state.expandedWorkspaces[repoPath] === false,
+          },
+        })),
+      setShowTestTerminal: (show) => set({ showTestTerminal: show }),
     }),
     {
       name: 'agent-orchestrator-ui',

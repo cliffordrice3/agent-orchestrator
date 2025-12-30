@@ -8,6 +8,11 @@ interface TerminalInstance {
   sessionId: string
 }
 
+interface StandaloneTerminalInstance {
+  pty: pty.IPty
+  id: string
+}
+
 const agentConfigs: typeof AGENT_CONFIGS = {
   'claude-code': {
     name: 'Claude Code',
@@ -31,6 +36,7 @@ const agentConfigs: typeof AGENT_CONFIGS = {
 
 export class TerminalManager {
   private terminals: Map<string, TerminalInstance> = new Map()
+  private standaloneTerminals: Map<string, StandaloneTerminalInstance> = new Map()
   private mainWindow: BrowserWindow | null = null
 
   setMainWindow(window: BrowserWindow): void {
@@ -118,6 +124,67 @@ export class TerminalManager {
   closeAllTerminals(): void {
     for (const [sessionId] of this.terminals) {
       this.closeTerminal(sessionId)
+    }
+    for (const [id] of this.standaloneTerminals) {
+      this.closeStandaloneTerminal(id)
+    }
+  }
+
+  // Standalone terminal methods (for test runner, etc.)
+  async createStandaloneTerminal(id: string, cwd: string): Promise<void> {
+    // Close existing standalone terminal with same id if exists
+    if (this.standaloneTerminals.has(id)) {
+      this.closeStandaloneTerminal(id)
+    }
+
+    const shell = process.platform === 'win32' ? 'powershell.exe' : process.env.SHELL || '/bin/zsh'
+
+    const terminal = pty.spawn(shell, [], {
+      name: 'xterm-256color',
+      cols: 120,
+      rows: 20,
+      cwd,
+      env: {
+        ...process.env,
+        TERM: 'xterm-256color',
+        COLORTERM: 'truecolor',
+      },
+    })
+
+    this.standaloneTerminals.set(id, {
+      pty: terminal,
+      id,
+    })
+
+    terminal.onData((data) => {
+      this.mainWindow?.webContents.send('standalone:output', id, data)
+    })
+
+    terminal.onExit(({ exitCode }) => {
+      this.mainWindow?.webContents.send('standalone:exit', id, exitCode)
+      this.standaloneTerminals.delete(id)
+    })
+  }
+
+  sendStandaloneInput(id: string, data: string): void {
+    const terminal = this.standaloneTerminals.get(id)
+    if (terminal) {
+      terminal.pty.write(data)
+    }
+  }
+
+  resizeStandaloneTerminal(id: string, cols: number, rows: number): void {
+    const terminal = this.standaloneTerminals.get(id)
+    if (terminal) {
+      terminal.pty.resize(cols, rows)
+    }
+  }
+
+  closeStandaloneTerminal(id: string): void {
+    const terminal = this.standaloneTerminals.get(id)
+    if (terminal) {
+      terminal.pty.kill()
+      this.standaloneTerminals.delete(id)
     }
   }
 }

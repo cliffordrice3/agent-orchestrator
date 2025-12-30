@@ -36,6 +36,30 @@ const api: IpcApi = {
   resizeTerminal: (sessionId: string, cols: number, rows: number): Promise<void> =>
     ipcRenderer.invoke('terminal:resize', sessionId, cols, rows),
 
+  // Standalone terminal (for test runner)
+  createStandaloneTerminal: (id: string, cwd: string): Promise<void> =>
+    ipcRenderer.invoke('standalone:create', id, cwd),
+  sendStandaloneInput: (id: string, data: string): Promise<void> =>
+    ipcRenderer.invoke('standalone:input', id, data),
+  resizeStandaloneTerminal: (id: string, cols: number, rows: number): Promise<void> =>
+    ipcRenderer.invoke('standalone:resize', id, cols, rows),
+  closeStandaloneTerminal: (id: string): Promise<void> =>
+    ipcRenderer.invoke('standalone:close', id),
+  onStandaloneOutput: (callback: (id: string, data: string) => void): (() => void) => {
+    const handler = (_: Electron.IpcRendererEvent, id: string, data: string) => {
+      callback(id, data)
+    }
+    ipcRenderer.on('standalone:output', handler)
+    return () => ipcRenderer.removeListener('standalone:output', handler)
+  },
+  onStandaloneExit: (callback: (id: string, code: number) => void): (() => void) => {
+    const handler = (_: Electron.IpcRendererEvent, id: string, code: number) => {
+      callback(id, code)
+    }
+    ipcRenderer.on('standalone:exit', handler)
+    return () => ipcRenderer.removeListener('standalone:exit', handler)
+  },
+
   // File operations
   selectFolder: (): Promise<string | null> => ipcRenderer.invoke('dialog:selectFolder'),
   openInVSCode: (path: string, files?: string[]): Promise<void> =>
